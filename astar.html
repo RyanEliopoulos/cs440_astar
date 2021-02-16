@@ -1,0 +1,84 @@
+<h1>AStar</h1>
+<p>AStar! In this assignment, you'll implement the A<em> Search algorithm.
+The stub code provides the framework for running A</em> on a generic
+<code>SearchProblem</code>.  Two <code>SearchProblem</code> classes are (partially) given:
+both work on simple 2D grids: the first on a grid represented by a list of lists,
+the second on a grid represented as pixels from an image.</p>
+<h1>Overview</h1>
+<ol>
+<li>Download the stub <code>astar.py</code>.</li>
+<li>Look through the code.  I've written some functionality, and the goal is for you to complete it.</li>
+<li>Note that there are 2 methods/functions that are unimplemented, these are where you should add your code.</li>
+<li>As before the code assumes four spaces of indentation. Set your editor appropriately, this is the default for many.</li>
+</ol>
+<h1>Notes on the Code</h1>
+<p>I've added ome descriptive doc-strings and comments. My hope is that these
+will help you understand the code better and write more idiomatic python.
+Here are a few items worth calling out:</p>
+<p><em>heapq</em> the heapq module implements heap operations on a list. It is
+worth reading about.</p>
+<p><em>namedtuple</em> named tuples create objects that are immutable (like tuples)
+but whose data can be accessed by name (instead of by an integer index as in a
+normal tuple).  The syntax for creating a namedtuple is relatively strange
+so there is a comment to explain it.</p>
+<h1>Implement the methods</h1>
+<p>Once the methods are implemented, you should be able to search the default
+grid simply by running from the command line:</p>
+<pre><code>&gt;python astar.py
+</code></pre>
+<p>My input/output looks like this:</p>
+<pre><code>Found route for cost: 8.000000
+(0, 0)
+(1, 0)
+(1, 1)
+(2, 1)
+(2, 2)
+(2, 3)
+(2, 4)
+(3, 4)
+(4, 4)
+Path found in 0.00 seconds
+20 states in the reached dict
+9 states on path to goal
+cost is: 8.00
+</code></pre>
+<p>Or limiting output of the path...</p>
+<pre><code>&gt;python astar.py -n 0
+Found route for cost: 8.000000
+Path found in 0.00 seconds
+10 states in the closed list
+9 states on path to goal
+cost is: 8.00
+</code></pre>
+<p>Or on an image...</p>
+<pre><code>&gt;python astar.py 12x8.png
+Found route for cost: 15.000000
+(0, 0)
+(1, 1)
+(1, 2)
+(1, 3)
+(2, 4)
+(3, 4)
+(4, 4)
+(5, 3)
+(6, 3)
+(7, 3)
+(8, 3)
+(9, 4)
+(9, 5)
+(9, 6)
+(10, 7)
+(11, 7)
+Path found in 0.01 seconds
+75 states in the closed list
+16 states on path to goal
+cost is: 15.00
+</code></pre>
+<h1>Turn in your code</h1>
+<p>Submit your code via Autolab. If you think there's a problem with the tests,
+please check the inline code specification carefully and recheck your
+results.  You may also want to look at the specific test that it's failing
+and try to reproduce that result. If it still looks like the tests are
+incorrect, send me a message and if you're correct, I'm happy to give you
+some extra credit points.</p>
+<p>https://autolab.encs.vancouver.wsu.edu</p>
