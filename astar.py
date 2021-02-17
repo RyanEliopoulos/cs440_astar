@@ -1,3 +1,16 @@
+"""
+    Ryan Paulos
+    2/16/2021
+
+    CS 440 - Artificial Intelligence
+    Assignment 2: A*
+
+    Search successfully navigates a grid and image within spec.
+
+"""
+
+
+
 from heapq import *
 import math
 import time
@@ -286,6 +299,10 @@ class AStar():
         while self.frontier:
             node = heappop(self.frontier)
             state = (node.state[0], node.state[1])
+            # Terminating if path has exceeded limit
+            if costlimit is not None and node.g > costlimit:
+                return False
+
             # Checking for goal state
             if self.problem.is_goal(state):
                 return node
