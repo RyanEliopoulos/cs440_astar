@@ -171,7 +171,7 @@ class ImageProblem(SearchProblem):
                 Returns edge cost between two nodes.
                 Each tuple contains the (R,G,B) values of a given pixel
             """
-            r_diff = ((tuple_one[0] - tuple_two[0]) / 32 ) ** 2
+            r_diff = ((tuple_one[0] - tuple_two[0]) / 32) ** 2
             g_diff = ((tuple_one[1] - tuple_two[1]) / 32) ** 2
             b_diff = ((tuple_one[2] - tuple_two[2]) / 32) ** 2
 
@@ -182,28 +182,50 @@ class ImageProblem(SearchProblem):
         height = bbox[3]
         width = bbox[2]
         # Determining coordinates of current pixel
-        state_pixels = self.img.getpixel(state[0], state[1])
+        state_pixels = self.img.getpixel((state[0], state[1]))
 
         # Constructing successor states
+        # Accounting for cardinal directions first
         if state[0] > 0:  # There is a pixel to the left
             ns = (state[0]-1, state[1])
-            successor_pixels = self.img.getpixel(ns[0], ns[1])
+            successor_pixels = self.img.getpixel((ns[0], ns[1]))
             yield ns, edge_cost(state_pixels, successor_pixels)
 
         if state[0] < width - 1:  # There is a pixel to the right
             ns = state[0]+1, state[1]
-            successor_pixels = self.img.getpixel(ns[0], ns[1])
+            successor_pixels = self.img.getpixel((ns[0], ns[1]))
             yield ns, edge_cost(state_pixels, successor_pixels)
 
         if state[1] > 0:  # There is a pixel above
             ns = (state[0], state[1]-1)
-            successor_pixels = self.img.getpixel(ns[0], ns[1])
+            successor_pixels = self.img.getpixel((ns[0], ns[1]))
             yield ns, edge_cost(state_pixels, successor_pixels)
 
         if state[1] < height - 1:  # There is a pixel below
             ns = (state[0], state[1]+1)
-            successor_pixels = self.img.getpixel(ns[0], ns[1])
+            successor_pixels = self.img.getpixel((ns[0], ns[1]))
             yield ns, edge_cost(state_pixels, successor_pixels)
+
+        # Accounting for diagonals
+        if state[0] > 0:  # Pixels to the left..
+            if state[1] > 0:  # .. and above
+                ns = (state[0]-1, state[1]-1)
+                successor_pixels = self.img.getpixel((ns[0], ns[1]))
+                yield ns, edge_cost(state_pixels, successor_pixels)
+            if state[1] < height - 1:  # .. and below
+                ns = (state[0]-1, state[1]+1)
+                successor_pixels = self.img.getpixel((ns[0], ns[1]))
+                yield ns, edge_cost(state_pixels, successor_pixels)
+
+        if state[0] < width - 1:  # Pixels to the right..
+            if state[1] > 0:  # .. and above
+                ns = (state[0]+1, state[1]-1)
+                successor_pixels = self.img.getpixel((ns[0], ns[1]))
+                yield ns, edge_cost(state_pixels, successor_pixels)
+            if state[1] < height - 1:  # .. and below
+                ns = (state[0]+1, state[1]+1)
+                successor_pixels = self.img.getpixel((ns[0], ns[1]))
+                yield ns, edge_cost(state_pixels, successor_pixels)
 
     def show_path(self, listofstates, pathfname='path.png'):
         """Given a list of states (each state specified as a tuple of
@@ -251,7 +273,38 @@ class AStar():
 
         Returns a TNode constituting a path, or False if the search failed.
         """
-        pass
+        # Initializing root TNode
+        h = self.problem.h(initialstate)
+        g = 0
+        f = g + h
+        root_node = TNode(f, g, h, initialstate, None)
+        # Adding root to search structures
+        heappush(self.frontier, root_node)
+        self.reached[initialstate] = root_node
+
+        # Beginning search loop
+        while self.frontier:
+            node = heappop(self.frontier)
+            state = (node.state[0], node.state[1])
+            # Checking for goal state
+            if self.problem.is_goal(state):
+                return node
+            # Evaluating potential moves
+            for child in self.problem.successors(state):
+                # Adding child to 'reached' or updating previous
+                # entry if current path is cheaper than last
+                child_state = child[0]
+                path_cost = node.g + child[1]  # running cost + action cost
+                if child_state not in self.reached or path_cost < self.reached[child_state].g:
+                    # creating new TNode
+                    h = self.problem.h(child_state)
+                    g = path_cost
+                    f = g + h
+                    new_node = TNode(f, g, h, child_state, node)
+                    self.reached[child_state] = new_node
+                    heappush(self.frontier, new_node)
+
+        return False
 
     def list_of_states(self, treenode):
         """Given a TNode instance, create a list of states representing
